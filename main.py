@@ -34,16 +34,26 @@ def misplaced_tile_distance(puzzle):
 def manhattan_distance(puzzle):
     i, j, distance = 0, 0, 0
     for item in range(n * n):
-        i = item / n # where it is
+        # where it is
+        i = item / n
         j = item % n
-        place_i = puzzle.p[item] / n # where it should be
-        place_j = puzzle.p[item] % n
+        # where it should be
+        place_i = puzzle[item] / n
+        place_j = puzzle[item] % n
+        if puzzle[item] == -1:
+            place_i = n-1
+            place_j = n-1
         distance += (abs(i - place_i) + abs(j - place_j))
     return distance
 
 
 if __name__ == '__main__':
-    puzzle_initial = [1, 2, 3, 4, 5, 6, 7, 8, -1, 10, 11, 12, 9, 13, 14, 15]
+    # puzzle_initial = [1, 2, 3, 4, 5, 6, 7, 8, -1, 10, 11, 12, 9, 13, 14, 15]
+    puzzle_initial = []
+    for i in range(n):  # A for loop for row entries
+        list = input().split(" ")
+        for item in list:
+            puzzle_initial.append(int(item))
     initial_cost = 0
     parent = None
     starting_node = Puzzle(puzzle_initial, initial_cost, parent)
@@ -63,7 +73,7 @@ if __name__ == '__main__':
             if item in seen:
                 unseen.remove(item)
                 continue
-            h = item.cost + misplaced_tile_distance(item.p)
+            h = item.cost + manhattan_distance(item.p)
             if h < min_h:
                 node_current = item
                 min_h = h
