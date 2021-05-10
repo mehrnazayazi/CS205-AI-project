@@ -1,3 +1,5 @@
+import numpy as np
+
 n = 4
 
 
@@ -55,8 +57,8 @@ if __name__ == '__main__':
     while unseen:
         min_h = 100000000
         node_current = unseen[0]
-        # Take from the seen list the node node_current with the lowest
-        # f(node_current) = g(node_current) + h(node_current)
+        # "Take from the seen list the node node_current with the lowest
+        # f(node_current) = g(node_current) + h(node_current)"
         for item in unseen:
             if item in seen:
                 unseen.remove(item)
@@ -67,8 +69,7 @@ if __name__ == '__main__':
                 min_h = h
         seen.append(node_current.p)
         path.append(node_current)
-        print(node_current.p)
-        # if node_current is node_goal we have found the solution; break
+        # "if node_current is node_goal we have found the solution; break"
         if node_current.p == goal.p:
             goal = node_current
             break
@@ -79,7 +80,7 @@ if __name__ == '__main__':
             if node_current.p[i] == -1:
                 blank_position = i
                 break
-        # Generate each state node_successor that come after node_current
+        # "Generate each state node_successor that come after node_current"
         # Move blank one to the right
         if blank_position % n != (n-1):
             child_puzzle = []
@@ -107,7 +108,7 @@ if __name__ == '__main__':
             if child_puzzle not in seen:
                 child = Puzzle(child_puzzle, node_current.cost+1, node_current)
                 unseen.append(child)
-        # move blank down
+        # Move blank down
         if blank_position // n != n-1:
             child_puzzle = []
             node_current.copy_p(child_puzzle)
@@ -119,9 +120,19 @@ if __name__ == '__main__':
         unseen.remove(node_current)
 
     node = goal
-    print("section 2")
-    while node.parent is not None:
-        print(node.p)
+    print("solution")
+    path = []
+    while node is not None:
+        puzzle = []
+        for i in range(n):
+            row = []
+            for j in range(n):
+                row.append(node.p[i*n+j])
+            puzzle.append(row)
+        path.append(puzzle)
         node = node.parent
+    for i in range(len(path)):
+        print(np.array(path.pop()))
+        print("---------------------")
 
 
