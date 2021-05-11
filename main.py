@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 n = 4
 
@@ -48,12 +49,19 @@ def manhattan_distance(puzzle):
 
 
 if __name__ == '__main__':
-    # puzzle_initial = [1, 2, 3, 4, 5, 6, 7, 8, -1, 10, 11, 12, 9, 13, 14, 15]
-    puzzle_initial = []
-    for i in range(n):  # A for loop for row entries
-        list = input().split(" ")
-        for item in list:
-            puzzle_initial.append(int(item))
+    start_time = 0
+    print("please enter 1 for uniform search, Enter 2 for misplaced tile heuristic and enter 3 for manhattan distance")
+    hf = int(input())
+    print("please enter 1 if you would like to use the default puazzle and enter 2 if you would like to enter a new puzzle")
+    p_preference = int(input())
+    if p_preference == 1:
+        puzzle_initial = [1, 2, 3,4,5,10, 6, 7, 9, 11,-1, 8,13,14,15,12]
+    else:
+        puzzle_initial = []
+        for i in range(n):  # A for loop for row entries
+            list = input().split(" ")
+            for item in list:
+                puzzle_initial.append(int(item))
     initial_cost = 0
     parent = None
     starting_node = Puzzle(puzzle_initial, initial_cost, parent)
@@ -65,6 +73,7 @@ if __name__ == '__main__':
     unseen = [starting_node]
     path = [starting_node]
     while unseen:
+        start_time = time.time()
         min_h = 100000000
         node_current = unseen[0]
         # "Take from the seen list the node node_current with the lowest
@@ -73,12 +82,24 @@ if __name__ == '__main__':
             if item in seen:
                 unseen.remove(item)
                 continue
-            h = item.cost + manhattan_distance(item.p)
+            # Choose the heuristic based one the input
+            if hf == 1:
+                h = item.cost
+            elif hf == 2:
+                h= item.cost + misplaced_tile_distance(item.p)
+            else:
+                h = item.cost + manhattan_distance(item.p)
             if h < min_h:
                 node_current = item
                 min_h = h
         seen.append(node_current.p)
-        path.append(node_current)
+        puzzle = []
+        # for i in range(n):
+        #     row = []
+        #     for j in range(n):
+        #         row.append(node_current.p[i * n + j])
+        #     puzzle.append(row)
+        # print(np.array(puzzle))
         # "if node_current is node_goal we have found the solution; break"
         if node_current.p == goal.p:
             goal = node_current
@@ -144,5 +165,6 @@ if __name__ == '__main__':
     for i in range(len(path)):
         print(np.array(path.pop()))
         print("---------------------")
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
